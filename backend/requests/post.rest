@@ -1,0 +1,9 @@
+POST http://localhost:3001/api/blogs
+Content-Type: application/json
+
+{
+    "title": "Jussimian paiteli",
+    "author": "Erkki-Mieskaksikko",
+    "url": "www.google.com",
+    "likes": 13
+}

@@ -18,6 +18,9 @@ const tokenExtractor = (request, response, next) => {
 }
 
 const userExtractor = (request, response, next) => {
+  if (!request.token) {
+    return response.status(401).send({ error: 'no token' })
+  }
   request.user = jwt.verify(request.token, process.env.SECRET)
   next()
 }
@@ -37,6 +40,8 @@ const errorHandler = (error, request, response, next) => {
     return response.status(400).json({ error: 'expected `username` to be unique' })
   } else if (error.name === 'JsonWebTokenError') {
     return response.status(400).json({ error: 'token missing or invalid' })
+  } else if (error.name === 'TokenExpiredError') {
+    return response.status(401).json({ error: 'token expired' })
   }
 
   next(error)

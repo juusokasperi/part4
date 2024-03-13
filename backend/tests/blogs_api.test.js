@@ -20,36 +20,21 @@ beforeEach(async () => {
 })
 
 test('correct amount of blogs is returned', async () => {
-  //Create test user, login and fetch token
-  const token = await helper.loginToken()
-
-  //Run test with the token
   const response = await api
     .get('/api/blogs')
-    .set('Authorization' ,`Bearer ${token}`)
   assert.strictEqual(response.body.length, helper.initialBlogs.length)
 })
 
 test('the blogs are returned as JSON', async () => {
-  //Create test user, login and fetch token
-  const token = await helper.loginToken()
-
-  //Run test with the token
   await api
     .get('/api/blogs')
-    .set('Authorization' ,`Bearer ${token}`)
     .expect(200)
     .expect('Content-Type', /application\/json/)
 })
 
 test('the returned blogs have an id field', async () => {
-  //Create test user, login and fetch token
-  const token = await helper.loginToken()
-
-  //Run test with the token
   const response = await api
     .get('/api/blogs')
-    .set('Authorization' ,`Bearer ${token}`)
   assert.strictEqual(response.body[0].id, helper.initialBlogs[0]._id)
 })
 
@@ -75,7 +60,6 @@ test('adding blogs to the db works', async () => {
 
   const response = await api
     .get('/api/blogs')
-    .set('Authorization' ,`Bearer ${token}`)
   assert.strictEqual(response.body.length, helper.initialBlogs.length + 1)
 
   const addedBlog = response.body.find(blog => blog.title === newBlog.title)
@@ -202,6 +186,27 @@ test('modifying a single blog works', async () => {
 
   assert.strictEqual(blogsAtEnd[blogsAtEnd.length - 1].title, updatedBlog.title)
   assert.strictEqual(blogsAtEnd[blogsAtEnd.length - 1].likes, updatedBlog.likes)
+})
+
+test('adding blogs without a token returns 401 Unauthorized', async () => {
+  //Run test without a token
+  const newBlog = {
+    title: 'Jusseli',
+    author: 'Pullaheikki',
+    url: 'www.google.com',
+    user: '65e9e9e3038102320abcb16e',
+    likes: 13
+  }
+
+  await api
+    .post('/api/blogs')
+    .send(newBlog)
+    .expect(401)
+    .expect('Content-Type', /application\/json/)
+
+  const response = await api
+    .get('/api/blogs')
+  assert.strictEqual(response.body.length, helper.initialBlogs.length)
 })
 
 after(async () => {

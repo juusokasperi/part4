@@ -1,5 +1,5 @@
 // eslint-disable-next-line no-unused-vars
-const { test, describe, after, beforeEach } = require ('node:test')
+const { test, after, beforeEach } = require ('node:test')
 const assert = require('node:assert')
 const mongoose = require('mongoose')
 const supertest = require('supertest')
@@ -168,6 +168,7 @@ test('modifying a single blog works', async () => {
     .expect(201)
     .expect('Content-Type', /application\/json/)
 
+  // Then the test itself
   const blogsAtStart = await helper.blogsInDb()
   const blogToUpdate = blogsAtStart[blogsAtStart.length - 1]
   const updatedBlog = {
